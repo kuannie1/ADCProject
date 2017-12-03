@@ -34,7 +34,6 @@ for columnIndex in range(0, len(pixelList), numColumns):
 	for pixelOffset in range(len(pixelList)/numColumns):
 
 		columnsList.append(pixelList[pixelOffset + columnIndex])
-	# columnsList.append(column)
 print "columnsList length: ", len(columnsList)
 
 rowsList = []
@@ -50,7 +49,5 @@ picture = np.array(rowsList)
 print picture
 
 cv2.imwrite("result.jpg", picture)
-
-
 
 file.close()

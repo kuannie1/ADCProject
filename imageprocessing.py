@@ -6,7 +6,6 @@ imgName = "rgb.jpg"
 img = cv2.imread(imgName)
 imgHeight = len(img)
 imgWidth = len(img[0])
-# print "height: ", len(img), " width: ", len(img[0]), " pixel: ", len(img[0][0])
 
 
 # get top left corner
@@ -15,7 +14,6 @@ print roi
 print len(roi)
 print len(roi[0])
 print len(roi[0][0])
-
 
 
 # cv2.imwrite("roi.jpg", roi)
