@@ -63,4 +63,10 @@ def test_example_code_from_tree():
 	assert huff_tree.left_child.left_child.left_child.value == reversed_code_dict['000']	
 	assert huff_tree.left_child.right_child.right_child.value == reversed_code_dict['011']
 
+def encode_string(input_string, code_dict):
+	res = ''
+	for char in input_string:
+		res += code_dict[char]
+	return res
+
 test_example_code_from_tree()
