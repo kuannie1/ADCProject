@@ -1,7 +1,7 @@
 # Given dictionary of characters and frequencies
 
 #Example
-# freq_dict = {'A': .7, 'B': .03, 'C': .07, 'D': .01, 'E': .06, 'F': .04, 'G': .089, 'H': .001}
+#freq_dict = {'A': .7, 'B': .03, 'C': .07, 'D': .01, 'E': .06, 'F': .04, 'G': .089, 'H': .001}
 
 class tree:
 	""" the tree class for process of huffman coding"""
@@ -13,6 +13,7 @@ class tree:
 
 
 def make_huffman_tree(freq_dict):
+	""" generates tree for huffman coding """
 	sub_trees = []
 	# initialize with each character as its own tree/node
 	for k,v in freq_dict.iteritems():
@@ -31,3 +32,35 @@ def make_huffman_tree(freq_dict):
 	# pop single tree from list
 	huffman_tree = sub_trees.pop(0)
 	return huffman_tree
+
+def code_from_tree(huff_tree, code = '', code_dict=dict()):
+	""" generates dictionary of encoding from tree """
+
+	if huff_tree.value:
+		code_dict[huff_tree.value] = code
+		
+
+	if huff_tree.left_child:
+		code_dict.update(code_from_tree(huff_tree.left_child, code= code + '0', code_dict = code_dict))
+
+	if huff_tree.right_child:
+		code_dict.update(code_from_tree(huff_tree.right_child, code= code + '1', code_dict= code_dict))
+
+	return code_dict
+
+
+
+
+def test_example_code_from_tree():
+	""" checks values of generated code from tree made from example frequency dictionary """
+	freq_dict = {'A': .7, 'B': .03, 'C': .07, 'D': .01, 'E': .06, 'F': .04, 'G': .089, 'H': .001}
+	huff_tree = make_huffman_tree(freq_dict)
+	code_dict = code_from_tree(huff_tree)
+	reversed_code_dict = {y:x for x,y in code_dict.iteritems()}
+	print code_dict
+
+	assert huff_tree.right_child.value == reversed_code_dict['1']
+	assert huff_tree.left_child.left_child.left_child.value == reversed_code_dict['000']	
+	assert huff_tree.left_child.right_child.right_child.value == reversed_code_dict['011']
+
+test_example_code_from_tree()
