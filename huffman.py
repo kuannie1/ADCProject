@@ -69,4 +69,11 @@ def encode_string(input_string, code_dict):
 		res += code_dict[char]
 	return res
 
-test_example_code_from_tree()
+def dictionary_to_binary(code_dict):
+	binary_dictionary = ''
+	dict_string = str(code_dict)
+	for char in dict_string:
+		binary_dictionary += bin(ord(char))[2:]
+	
+	return binary_dictionary
+
