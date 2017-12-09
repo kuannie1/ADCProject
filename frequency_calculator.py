@@ -38,6 +38,7 @@ if __name__ == '__main__':
     (h, w, _) = img.shape
     print img[1] # one of the 3 color channels
     freqs = get_frequencies(img[1])
+    print(freqs)
     num = 0
     for key in freqs:
         num += freqs[key]
