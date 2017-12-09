@@ -1,7 +1,8 @@
 """
 Tests used in development. Import files as needed.
 """
-
+import numpy as np
+import cv2
 import huffman	
 
 def test_example_code_from_tree():

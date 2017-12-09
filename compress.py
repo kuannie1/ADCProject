@@ -14,7 +14,8 @@ Main script that utilizes all other components:
 
     possibility: call gnuradio from this script
 """
-
+import numpy as np
+import cv2
 import image_processing
 import frequency_calculator
 import huffman
