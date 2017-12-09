@@ -151,6 +151,30 @@ def data_to_write(img, huff_tree):
  	data= np.concatenate(args)
  	data = expand(data)
  	return data
+
+def complexize_data(nparray_data):
+	""" Takes in results from data_to_write and makes every other index complex """
+ 	print nparray_data
+ 	list_data = list(nparray_data)
+ 	for i in range(1, len(list_data), 2):
+ 		list_data[i] = 1j*list_data[i]
+ 	result = np.array(list_data)
+ 	print result
+
+def write_to_file(complex_array):
+	""" Takes in np array with complex values & writes them to file """
+	# source; https://stackoverflow.com/questions/29809988/numpy-array-tofile-binary-file-looks-strange-in-notepad
+	filename = "fileOutput.dat"
+	fileobj = open(filename, mode='wb')
+	off = np.array(complex_array, dtype=np.float32)
+	off.tofile(fileobj)
+	fileobj.close()
+
+	fileobj2 = open(filename, mode='rb')
+	off = np.fromfile(fileobj2, dtype = np.float32)
+	print(off)
+	fileobj2.close()
+
  	
 
 def test_example_code_from_tree():
@@ -180,6 +204,9 @@ if __name__ == '__main__':
  	code_dict = code_from_tree(huff_tree)
  	encoded_img, dimensions = encode_image(test_img, code_dict)
 
- 	data_to_write(test_img, huff_tree)
+ 	dataToWrite = data_to_write(test_img, huff_tree)
+ 	complexizedData = complexize_data(dataToWrite)
+ 	write_to_file(complexizedData)
+ 	# based on data to write, get 
 
 
