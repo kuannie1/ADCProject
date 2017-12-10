@@ -12,18 +12,32 @@ def flip_dictionary(code_dict):
 
 
 def dictionary_to_binary(input_dict):
-	""" Converts the dictionary to binary.
+	""" Converts the dictionary to np array of bits
+	where every 8 bits alternatingly represent keys and values.
 	Assumes keys and values are numbers. """
 
 	res = []
-	res += make_binary_list(ord('{'))
 	for k, v in input_dict.iteritems():
 		res += make_binary_list(k)
-		res += make_binary_list(ord(':'))
 		res += make_binary_list(v)
-	res += make_binary_list(ord('}'))
 
 	return np.array(res)
+
+def binary_to_dictionary(binary_dict_array):
+	# takes in np array of bits where every 8 bits alternatingly represent
+	# keys and values in a dictionary.
+	res = {}
+
+	for i in range(0, len(binary_dict_array), 16):
+		key = ''
+		val = ''
+		for j in range(8):
+			key += str(binary_dict_array[i + j])
+			val += str(binary_dict_array[i + j + 8])
+
+		res[int(key, 2)] = int(val,2)
+
+	return res
 
 def expand(input_array):
 	""" Given a binary input array, change 0 values to -1 
@@ -67,4 +81,6 @@ def complexize_data(nparray_data):
 
 
 if __name__ == '__main__':
-    pass
+    b =  dictionary_to_binary({5:2, 1:7, 8:12})
+    print binary_to_dictionary(b)
+    print b

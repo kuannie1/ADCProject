@@ -95,4 +95,4 @@ def encode_image(img, code_dict):
 
 
 if __name__ == '__main__':
- 
+	pass
