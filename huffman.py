@@ -57,10 +57,12 @@ def code_from_tree(huff_tree, code = '', code_dict=dict(), top=True):
 			code= code + '1', code_dict= code_dict, top = False))
 
 	if top:
-		for k in code_dict:
-			code_dict[k] = int(code_dict[k],2)
-	
+		print "hello"
+		#for k in code_dict:
+			#code_dict[k] = int(code_dict[k],2)
+		print('code_dict', code_dict)
 	# returns dictionary of {val number: code number}
+
 	return code_dict
 
 
@@ -77,9 +79,8 @@ def encode_image(img, code_dict):
 	# and assign encoded value
 	for row_index in range(0, h):
 		for col_index in range(0, w):
-			decimal_val = code_dict[img[row_index][col_index]]
-			binary_val = bin(decimal_val)[2:]
-			binary_list = [int(d) for d in binary_val]
+			binary_string = code_dict[img[row_index][col_index]]
+			binary_list = [int(d) for d in binary_string]
 			res += binary_list
 	
 	h = data_processing.make_binary_list(h)
@@ -87,6 +88,8 @@ def encode_image(img, code_dict):
 
 	dimensions = np.array(h + w)
 	res = np.array(res)
+	print img
+	print res
 	# returns res = np array of numbers and dimesnions = np array of numbers
 	return (res, dimensions)
 
@@ -95,4 +98,4 @@ def encode_image(img, code_dict):
 
 
 if __name__ == '__main__':
- 
+	pass
