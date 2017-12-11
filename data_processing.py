@@ -115,7 +115,7 @@ def make_binary_list(num, eight_bit=True):
 
 
 def complexize_data(nparray_data):
-    """ Takes in results from data_to_write and makes every other index the complex part of the signal (0) """
+    """ Makes every other index the complex part of the signal (0) """
     list_data = []
     for i in range(len(nparray_data)):
         list_data.append(nparray_data[i])
@@ -124,6 +124,7 @@ def complexize_data(nparray_data):
     
 
 def decomplexize_data(nparray_data):
+	""" Adds real and imaginary components of signal back together """
 	list_data = []
 	for i in range(0, len(nparray_data), 2):
 		list_data.append(nparray_data[i] + nparray_data[i+1])
