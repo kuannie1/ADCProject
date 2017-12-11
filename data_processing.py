@@ -2,6 +2,7 @@
 Data processing used for USRP wireless communication.
 """
 import numpy as np
+import matplotlib.pyplot as plt
 import cv2, math
 import huffman
 import math
@@ -133,11 +134,15 @@ def remove_channel_effects(y):
     """
     y_square = np.square(y)
     fft_y_square = abs(np.fft.fftshift(np.fft.fft(y_square)))
-    h_square, two_f_delta = max(fft_y_square), np.argmax(fft_y_square)
-    f_delta = two_f_delta / 2
-    h = math.sqrt(h_square)
+    xaxis = np.linspace(-32000/2.0, 32000/2.0, len(y_square))
+    h_square, idx = max(fft_y_square), np.argmax(fft_y_square)
+    f_delta = xaxis[idx] / 2.0
+    h = np.sqrt(h_square)
+    #plt.plot(xaxis, fft_y_square)
+    #plt.show()
     for n in range(0, y.size):
-        y[n] = y[n] / (h * exp(1j*f_delta*n));
+        stuff = (h * np.e**(1.0j*f_delta*n))
+        y[n] = (y[n]+0j) / stuff
     return y
 
 def remove_noise(y):
@@ -148,7 +153,7 @@ def remove_noise(y):
         y: received signal
         returns: signal without noise
     """
-    pass
+    return y
 
 def estimate_transmitted_signal(y):
     """ Takes in a noisy, received signal (y) and estimates the original transmitted
@@ -158,9 +163,11 @@ def estimate_transmitted_signal(y):
         y: received signal
         returns: estimated signal
     """
-    return remove_channel_effects(remove_noise(y))
+    x_est = remove_channel_effects(remove_noise(y))
+    return x_est
 
 if __name__ == '__main__':
     from decompress import read_from_file
-    y = read_from_file()
-    print unexpand_and_correct(np.array([-1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, 1, 1, -1]), 5)
+    y = read_from_file('transmissiontest.dat')
+    estimate_transmitted_signal(y)
+    #print unexpand_and_correct(np.array([-1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, 1, 1, -1]), 5)
