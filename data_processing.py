@@ -119,9 +119,16 @@ def complexize_data(nparray_data):
     list_data = []
     for i in range(len(nparray_data)):
         list_data.append(nparray_data[i])
-        list_data.appned(0)
-    result = np.array(list_data)
-    return result
+        list_data.append(0)
+    return np.array(list_data)
+    
+
+def decomplexize_data(nparray_data):
+	list_data = []
+	for i in range(0, len(nparray_data), 2):
+		list_data.append(nparray_data[i] + nparray_data[i+1])
+	return np.array(list_data)
+
 
 def remove_channel_effects(y):
     """ Removes the effects of the channel by calculating h
@@ -162,4 +169,4 @@ def estimate_transmitted_signal(y):
 
 if __name__ == '__main__':
     from decompress import read_from_file
-    print unexpand_and_correct(np.array([1, -1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, 1, 1, -1]), 5)
+    #print unexpand_and_correct(np.array([1, -1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, 1, 1, -1]), 5)
