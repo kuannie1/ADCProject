@@ -2,7 +2,7 @@
 
 import numpy as np
 
-def puffman(code_dict, img):
+def puffman(img, decode_dict):
 	"""Given dictionary of huffman encoding and
 	message representing image, decode back to
 	original numeric values of image array"""
@@ -16,8 +16,8 @@ def puffman(code_dict, img):
 	curr = ''
 	for val in img:
 		curr += str(val)
-		if curr in code_dict:
-			res.append(code_dict[curr])
+		if curr in decode_dict:
+			res.append(decode_dict[curr])
 			curr = ''
 	print res
 	return res
