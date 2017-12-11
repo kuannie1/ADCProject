@@ -5,6 +5,8 @@ import cv2, math
 import numpy as np
 from PIL import Image
 from frequency_calculator import get_frequencies
+from data_processing import *
+from puffman import *
 
 class Tile(object):
     """ Tile class for storing data about a tile of an image """
