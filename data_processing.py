@@ -95,11 +95,11 @@ def unexpand_and_correct(arr, expand_scale = 50):
 			arr[i] = 0
 	res_length = int(math.ceil(len(arr)/expand_scale))
 	for i in range(res_length):
-		if (i+1)*expand_scale  < len(arr):		
+		if (i+1)*expand_scale - 10  < len(arr):		
 			# arr[0: 50], arr[50:100], arr[100: 150]
-			val = stats.mode(arr[i*expand_scale: (i+1)*expand_scale])[0]
+			val = stats.mode(arr[i*expand_scale + (expand_scale/5) : (i+1)*expand_scale - (expand_scale/5)])[0]
 		else:
-			val = stats.mode(arr[i*expand_scale:])[0]
+			val = stats.mode(arr[i*expand_scale + (expand_scale/5) :])[0]
 		
 		res.append(val[0])
 	return np.array(res)
@@ -116,13 +116,20 @@ def make_binary_list(num, eight_bit=True):
 
 
 def complexize_data(nparray_data):
-    """ Takes in results from data_to_write and makes every other index complex """
+    """ Makes every other index the real and imaginary part of signal """
+    list_data = []
+    for i in range(len(nparray_data)):
+        list_data.append(np.real(nparray_data[i]))
+        list_data.append(np.imag(nparray_data[i]))
+    return np.array(list_data)
     
-    list_data = list(nparray_data)
-    for i in range(1, len(list_data), 2):
-        list_data[i] = 1j*list_data[i]
-    result = np.array(list_data)
-    return result
+
+def decomplexize_data(nparray_data):
+	""" Adds real and imaginary components of signal back together """
+	list_data = []
+	for i in range(0, len(nparray_data), 2):
+		list_data.append(nparray_data[i] + nparray_data[i+1])
+	return np.array(list_data)
 
 def remove_channel_effects(y):
     """ Removes the effects of the channel by calculating h
@@ -140,10 +147,14 @@ def remove_channel_effects(y):
     h = np.sqrt(h_square)
     #plt.plot(xaxis, fft_y_square)
     #plt.show()
+    x = np.zeros(y.shape, dtype=complex)
     for n in range(0, y.size):
         stuff = (h * np.e**(1.0j*f_delta*n))
-        y[n] = (y[n]+0j) / stuff
-    return y
+        x[n] = (y[n]) / stuff
+    plt.plot(x)
+    plt.show()
+
+    return x
 
 def remove_noise(y):
     """ Removes the noise on the two ends of the received signal by looking
@@ -169,5 +180,6 @@ def estimate_transmitted_signal(y):
 if __name__ == '__main__':
     from decompress import read_from_file
     y = read_from_file('transmissiontest.dat')
+    y = decomplexize_data(y)
     estimate_transmitted_signal(y)
-    #print unexpand_and_correct(np.array([-1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, 1, 1, -1]), 5)
+    #print unexpand_and_correct(np.array([1, -1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, 1, 1, -1]), 5)
