@@ -115,11 +115,11 @@ def make_binary_list(num, eight_bit=True):
 
 
 def complexize_data(nparray_data):
-    """ Takes in results from data_to_write and makes every other index complex """
-    
-    list_data = list(nparray_data)
-    for i in range(1, len(list_data), 2):
-        list_data[i] = 1j*list_data[i]
+    """ Takes in results from data_to_write and makes every other index the complex part of the signal (0) """
+    list_data = []
+    for i in range(len(nparray_data)):
+        list_data.append(nparray_data[i])
+        list_data.appned(0)
     result = np.array(list_data)
     return result
 
