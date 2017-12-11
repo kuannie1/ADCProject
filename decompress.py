@@ -46,4 +46,9 @@ def read_from_file(filename):
     return off
 
 if __name__ == '__main__':
-  pass
+	y = read_from_file('transmissiontest.dat')
+	y = data_processing.decomplexize_data(y)
+ 	y = data_processing.estimate_transmitted_signal(y)
+ 	y = data_processing.unexpand_and_correct(y)
+
+ 	print y

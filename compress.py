@@ -56,6 +56,10 @@ if __name__ == '__main__':
     arr = np.array([0,1])
 
     # EXAMPLE TEST OF USE
-    test_img = np.array([[1, 2, 5, 6, 2], [2, 5, 3, 5, 1], [3, 6, 1, 5, 1]])
-    main(test_img)
+    #test_img = np.array([[1, 2, 5, 6, 2], [2, 5, 3, 5, 1], [3, 6, 1, 5, 1]])
+    #main(test_img)
    
+    a = np.array([1, 0, 1])
+    a = data_processing.expand(a)
+    a = data_processing.complexize_data(a)
+    write_to_file(a)

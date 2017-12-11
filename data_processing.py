@@ -141,7 +141,7 @@ def remove_channel_effects(y):
     """
     y_square = np.square(y)
     fft_y_square = abs(np.fft.fftshift(np.fft.fft(y_square)))
-    xaxis = np.linspace(-32000/2.0, 32000/2.0, len(y_square))
+    xaxis = np.linspace(-250000/2.0, 250000/2.0, len(y_square))
     h_square, idx = max(fft_y_square), np.argmax(fft_y_square)
     f_delta = xaxis[idx] / 2.0
     h = np.sqrt(h_square)
