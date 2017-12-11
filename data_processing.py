@@ -94,11 +94,11 @@ def unexpand_and_correct(arr, expand_scale = 50):
 			arr[i] = 0
 	res_length = int(math.ceil(len(arr)/expand_scale))
 	for i in range(res_length):
-		if (i+1)*expand_scale  < len(arr):		
+		if (i+1)*expand_scale - 10  < len(arr):		
 			# arr[0: 50], arr[50:100], arr[100: 150]
-			val = stats.mode(arr[i*expand_scale: (i+1)*expand_scale])[0]
+			val = stats.mode(arr[i*expand_scale + (expand_scale/5) : (i+1)*expand_scale - (expand_scale/5)])[0]
 		else:
-			val = stats.mode(arr[i*expand_scale:])[0]
+			val = stats.mode(arr[i*expand_scale + (expand_scale/5) :])[0]
 		
 		res.append(val[0])
 	return np.array(res)
@@ -162,5 +162,4 @@ def estimate_transmitted_signal(y):
 
 if __name__ == '__main__':
     from decompress import read_from_file
-    y = read_from_file()
-    print unexpand_and_correct(np.array([-1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, 1, 1, -1]), 5)
+    print unexpand_and_correct(np.array([1, -1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, 1, 1, -1]), 5)
