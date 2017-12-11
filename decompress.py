@@ -13,10 +13,11 @@ Steps:
 """
 
 def read_from_file(filename):
-	fileobj2 = open(filename, mode='rb')
+    fileobj2 = open(filename, mode='rb')
     off = np.fromfile(fileobj2, dtype = np.float32)
     print(off)
     fileobj2.close()
+    return off
 
 if __name__ == '__main__':
     pass

@@ -89,19 +89,17 @@ class ImageProcessing(object):
                     r, g, b = img.getpixel((i, j))
                     rgb_array = np.array([r, g, b])
                     yCbCr = np.matmul(self.rgb2ycbcr_matrix, rgb_array)
-                    tile.y_tile[j][i], tile.cb_tile[j][i], tile.cr_tile[j][i] = yCbCr[0], yCbCr[1], yCbCr[2]
+                    tile.y_tile[j][i], tile.cb_tile[j][i], tile.cr_tile[j][i] = center_zero(yCbCr[0]), center_zero(yCbCr[1]), center_zero(yCbCr[2])
             # see the tile
             # Image.fromarray(tile.y_tile).show()
 
-    def center_zero(self):
-        pass
-
+    def center_zero(self, value):
+        return value - 127
+    
     def compress(self):
         self.init_image()
         self.create_tiles()
         self.color_transform()
-
-
 
 if __name__ == '__main__':
 	ImageProcessing().compress()

@@ -2,7 +2,7 @@
 Data processing used for USRP wireless communication.
 """
 import numpy as np
-import cv2
+import cv2, math
 import huffman
 
 
@@ -65,6 +65,42 @@ def complexize_data(nparray_data):
     result = np.array(list_data)
     print result
 
+def remove_channel_effects(y):
+    """ Removes the effects of the channel by calculating h
+        and the frequency offset between the receiver and transmitter
+        and dividing them out of the signal as appropriate.
+
+        y: received signal
+        returns: x_estimate
+    """
+    y_square = np.square(y)
+    fft_y_square = abs(np.fft.fftshift(np.fft.fft(y_square)))
+    h_square, two_f_delta = max(fft_y_square), np.argmax(fft_y_square)
+    f_delta = two_f_delta / 2
+    h = math.sqrt(h_square)
+    for n in range(0, y.size):
+        y[n] = y[n] / (h * exp(1j*f_delta*n));
+    return y
+
+def remove_noise(y):
+    """ Removes the noise on the two ends of the received signal by looking
+        for large changes in signal power, indicating the start and end of
+        the signal, and truncating the signal as appropriate
+        y: received signal
+        returns: signal without noise
+    """
+    pass
+
+def estimate_transmitted_signal(y):
+    """ Takes in a noisy, received signal (y) and estimates the original transmitted
+        signal by squaring y and finding the the peak in the FFT of the y^2 to
+        calculate the channel h and the frequency offset f_delta.
+
+        y: received signal
+        returns: estimated signal
+    """
+    return remove_channel_effects(remove_noise(y))
 
 if __name__ == '__main__':
-    pass
+    from decompress import read_from_file
+    y = read_from_file()
