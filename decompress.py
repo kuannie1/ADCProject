@@ -19,34 +19,34 @@ import matplotlib.pyplot as plt
 from scipy import stats
 import data_processing
 import puffman
+import image_processing
 
-def main(filename):
+
+
+def main(filename, header, start_index = 0, end_index = None):
     """ Recreates image from transmitted data """
 
     # Will need to retreive image data (dimensions, encoded img, dictionary) for each tile of each channel of the image
 
-    data = read_from_file(filename) # I don't think this will work because read_from_file doesn't return anything???
-    #data = decomplexize data
-    # data = # thing to remove noise before and after transmitted signal 
+    data = read_from_file(filename)
+    if end_index == None: end_index = len(data)
+    data = dataprocessing.decomplexize(data)
+    data = data[start_index:end_index]
     data = data_processing.unexpand_and_correct(data)
-    # [dimensions, encoded_img, decode_dict] = result of function that pulls these from data
+    [dimensions, encoded_img, decode_dict] = data_processing.data_from_array(data, header)
     decode_dict = data_processing.binary_to_dictionary(decode_dict)
-
     img_1d = puffman.puffman(encoded_img, decode_dict)
-    #img = puffman.to_array(img_1d, dimensions)
-
-    #img processing stuff
-
-    #cv img np array to img file export
+    img = puffman.to_array(img_1d, dimensions)
+    image_processing.save_image(img)
 
 def read_from_file(filename):
     fileobj2 = open(filename, mode='rb')
     off = np.fromfile(fileobj2, dtype = np.float32)
-    print(off)
     fileobj2.close()
     return off
 
 if __name__ == '__main__':
+
 	y = read_from_file('transmissiontest.dat')
 	y = data_processing.decomplexize_data(y)
         y = y[252800 + 30-1 : 252800 + 612-1]
@@ -54,3 +54,4 @@ if __name__ == '__main__':
  	y = data_processing.unexpand_and_correct(y)
         np.set_printoptions(threshold='nan')
  	print y
+

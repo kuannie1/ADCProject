@@ -56,13 +56,6 @@ def code_from_tree(huff_tree, code = '', code_dict=dict(), top=True):
 		code_dict.update(code_from_tree(huff_tree.right_child,
 			code= code + '1', code_dict= code_dict, top = False))
 
-	if top:
-		print "hello"
-		#for k in code_dict:
-			#code_dict[k] = int(code_dict[k],2)
-		print('code_dict', code_dict)
-	# returns dictionary of {val number: code number}
-
 	return code_dict
 
 
@@ -88,8 +81,6 @@ def encode_image(img, code_dict):
 
 	dimensions = np.array(h + w)
 	res = np.array(res)
-	print img
-	print res
 	# returns res = np array of numbers and dimesnions = np array of numbers
 	return (res, dimensions)
 

@@ -95,19 +95,14 @@ def unexpand_and_correct(arr, expand_scale = 150):
 			arr[i] = 0
 	res_length = int(math.ceil(len(arr)/float(expand_scale)))
 	for i in range(res_length):
-	        print "i", i
 		if (i+1)*expand_scale - (expand_scale / 5.0)  < len(arr):
 			# arr[0: 50], arr[50:100], arr[100: 150]
                         indx1 = i*expand_scale + (expand_scale/5.0)
-                        print "indx1", indx1
                         indx2 = (i+1)*expand_scale - (expand_scale/5.0)
-                        print "indx2", indx2
 			val = stats.mode(arr[int(indx1): int(indx2)])[0]
 		else:
 		        indx3 = i*expand_scale + (expand_scale/5.0) 
-                        print "indx3", indx3
 			val = stats.mode(arr[int(indx3) :])[0]
-		print "val", val
 		res.append(val[0])
 	return np.array(res)
 
@@ -192,6 +187,59 @@ def estimate_transmitted_signal(y):
     """
     x_est = remove_channel_effects(remove_noise(y))
     return x_est
+
+
+def data_from_array(arr, header):
+	""" From 1D transmitted array, given header, returns bit array for 
+	dimensions, image data, and the dictionary. """ 
+	data_set = False
+
+	for i in range(len(arr)-len(header)):
+		# if previous len(header) bits are the header
+		if np.array_equal(arr[i:i+len(header)],header):
+			# Start header found
+			# set dimensions to first 16 bits after header 
+			# first 8 are height, second 8 are width
+			dim_start_index = i + len(header)
+			dimensions = arr[dim_start_index:dim_start_index+16]
+			img_start_index = dim_start_index+16
+			break
+
+	if img_start_index is None:
+		print('Error: No start header found. Dimensions array was not created.')
+		return
+
+	img = []
+	for i in range(img_start_index, len(arr)-len(header)): 
+		if np.array_equal(arr[i:i+len(header)], header):
+			# Middle header fouond
+			img = np.array(img)
+			dict_start_index = i+len(header)
+			break
+		img.append(arr[i])
+
+	if dict_start_index is None:
+		print('Error: No middle header found. Image array was not created.')
+		return
+
+	d = []
+	for i in range(dict_start_index, len(arr)-len(header)):
+		
+		if np.array_equal(arr[i:i+len(header)], header):
+			# End header found
+			d = np.array(d)
+			data_set = True
+			break
+		else:
+			d.append(arr[i])
+	
+	if data_set:
+		return[dimensions, img, d]
+	else:
+		print('Error: End header not found. Dictionary array was not created.')
+		return
+
+
 
 if __name__ == '__main__':
     from decompress import read_from_file
