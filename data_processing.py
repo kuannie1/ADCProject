@@ -93,14 +93,21 @@ def unexpand_and_correct(arr, expand_scale = 150):
 			arr[i] = 1
 		else:
 			arr[i] = 0
-	res_length = int(math.ceil(len(arr)/expand_scale))
+	res_length = int(math.ceil(len(arr)/float(expand_scale)))
 	for i in range(res_length):
-		if (i+1)*expand_scale - 10  < len(arr):		
+	        print "i", i
+		if (i+1)*expand_scale - (expand_scale / 5.0)  < len(arr):
 			# arr[0: 50], arr[50:100], arr[100: 150]
-			val = stats.mode(arr[i*expand_scale + (expand_scale/5) : (i+1)*expand_scale - (expand_scale/5)])[0]
+                        indx1 = i*expand_scale + (expand_scale/5.0)
+                        print "indx1", indx1
+                        indx2 = (i+1)*expand_scale - (expand_scale/5.0)
+                        print "indx2", indx2
+			val = stats.mode(arr[int(indx1): int(indx2)])[0]
 		else:
-			val = stats.mode(arr[i*expand_scale + (expand_scale/5) :])[0]
-		
+		        indx3 = i*expand_scale + (expand_scale/5.0) 
+                        print "indx3", indx3
+			val = stats.mode(arr[int(indx3) :])[0]
+		print "val", val
 		res.append(val[0])
 	return np.array(res)
 
@@ -126,10 +133,13 @@ def complexize_data(nparray_data):
 
 def decomplexize_data(nparray_data):
     """ Adds real and imaginary components of signal back together """
-    list_data = []
-    for i in range(0, len(nparray_data), 2):
-        list_data.append(nparray_data[i] + nparray_data[i+1])
-    return np.array(list_data)
+    y = np.zeros(len(nparray_data)/2)
+    y = nparray_data[0::2] + 1j*nparray_data[1::2]
+    return y
+    #list_data = []
+    #for i in range(0, len(nparray_data), 2):
+    #    list_data.append(nparray_data[i] + 1j*nparray_data[i+1])
+    #return np.array(list_data)
 
 def remove_channel_effects(y):
     """ Removes the effects of the channel by calculating h
@@ -159,9 +169,8 @@ def remove_channel_effects(y):
         # imaginary part, but I don't think we need
         # to worry about that part since the imaginary
         # part is just 0j
-        x_estimate[n] = y[n] / channel_effects
-
-    return x_estimate
+        y[n] = y[n] / channel_effects
+    return np.real(y)
 
 def remove_noise(y):
     """ Removes the noise on the two ends of the received signal by looking

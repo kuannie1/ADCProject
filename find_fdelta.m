@@ -4,8 +4,6 @@ function  [fdelta, h] = find_fdelta()
     y_square = y.^2;
     fft_y2 = abs(fftshift(fft(y_square)));
     xaxis = linspace(-pi, (length(y_square) - 1) / length(y_square) * pi, length(y_square));
-    figure
-    plot(xaxis, fft_y2); % impulse has index of 2fdelta and area h^2
     [h_sq, idx] = max(fft_y2)
     theta = angle(xaxis(idx)) / 2;
     fdelta = xaxis(idx) / 2;
@@ -13,12 +11,6 @@ function  [fdelta, h] = find_fdelta()
     for n=1:length(y)
         y(n) = y(n) / (h * exp(1i*(fdelta*n + theta)));
     end
-    figure
-    plot(y);
-    figure
-    plot(real(y), imag(y));
-    figure
-    plot(real(y)); % second eye
 end
 function y = read_file()
     f1 = fopen('transmissiontest.dat', 'r');
