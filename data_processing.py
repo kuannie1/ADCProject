@@ -60,7 +60,7 @@ def binary_to_dictionary(binary_dict_array):
 		res[key] = int(val,2)
 	return res
 
-def expand(arr, expand_scale = 50):
+def expand(arr, expand_scale = 150):
 	""" Given a binary input array, change 0 values to -1 
 	and expand such that each value in the array is
 	repeated 50 times. """
@@ -80,13 +80,13 @@ def expand(arr, expand_scale = 50):
 	return expanded_array
 
 
-def unexpand_and_correct(arr, expand_scale = 50):
+def unexpand_and_correct(arr, expand_scale = 150):
 	""" Given a received 1-D np array (expanded before transimission), 
 	retrieve original 0s and 1s array from before expansion
 	correcting for errors in process """
 
 	res = []
-
+        
 	# convert to 0s and 1s.
 	for i in range(len(arr)):
 		if arr[i] > 0:
@@ -125,11 +125,11 @@ def complexize_data(nparray_data):
     
 
 def decomplexize_data(nparray_data):
-	""" Adds real and imaginary components of signal back together """
-	list_data = []
-	for i in range(0, len(nparray_data), 2):
-		list_data.append(nparray_data[i] + nparray_data[i+1])
-	return np.array(list_data)
+    """ Adds real and imaginary components of signal back together """
+    list_data = []
+    for i in range(0, len(nparray_data), 2):
+        list_data.append(nparray_data[i] + nparray_data[i+1])
+    return np.array(list_data)
 
 def remove_channel_effects(y):
     """ Removes the effects of the channel by calculating h
@@ -141,20 +141,27 @@ def remove_channel_effects(y):
     """
     y_square = np.square(y)
     fft_y_square = abs(np.fft.fftshift(np.fft.fft(y_square)))
-    xaxis = np.linspace(-250000/2.0, 250000/2.0, len(y_square))
+    xaxis = np.linspace(-np.pi, (len(y_square) - 1.0) / len(y_square) * np.pi, len(y_square))
     h_square, idx = max(fft_y_square), np.argmax(fft_y_square)
+    theta = np.angle(xaxis[idx]) / 2.0
     f_delta = xaxis[idx] / 2.0
     h = np.sqrt(h_square)
-    #plt.plot(xaxis, fft_y_square)
-    #plt.show()
-    x = np.zeros(y.shape, dtype=complex)
-    for n in range(0, y.size):
-        stuff = (h * np.e**(1.0j*f_delta*n))
-        x[n] = (y[n]) / stuff
-    plt.plot(x)
-    plt.show()
 
-    return x
+    x_estimate = np.zeros(y.shape, dtype=complex)
+    for n in range(0, y.size):
+        channel_effects = (h * np.e**(1.0j*(f_delta*n + theta)))
+
+        # can change this following line to:
+        # y[n] = y[n] / channel_effects
+        # to get rid of the j in the final output
+        # but there is a warning that casting a
+        # complet number to real gets rid of the
+        # imaginary part, but I don't think we need
+        # to worry about that part since the imaginary
+        # part is just 0j
+        x_estimate[n] = y[n] / channel_effects
+
+    return x_estimate
 
 def remove_noise(y):
     """ Removes the noise on the two ends of the received signal by looking
