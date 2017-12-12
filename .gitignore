@@ -1,3 +1,7 @@
 .DS_Store
 *.pyc
 *.m~
+top_block.py
+fileOutput.dat
+n.ps
+untitled.grc

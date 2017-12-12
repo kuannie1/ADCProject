@@ -48,7 +48,8 @@ def read_from_file(filename):
 if __name__ == '__main__':
 	y = read_from_file('transmissiontest.dat')
 	y = data_processing.decomplexize_data(y)
+        y = np.real(y[252800 + 30-1 : 252800 + 612-1])
  	y = data_processing.estimate_transmitted_signal(y)
  	y = data_processing.unexpand_and_correct(y)
-
+        np.set_printoptions(threshold='nan')
  	print y
