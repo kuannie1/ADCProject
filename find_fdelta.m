@@ -23,13 +23,15 @@ function  [fdelta, h] = find_fdelta()
     plot(real(y))
 end
 function y = read_file()
-    f1 = fopen('transmissiontest.dat', 'r');
+    f1 = fopen('rx.dat', 'r');
     tmp = fread(f1,'float32');
     fclose(f1);
     y = tmp(1:2:end)+1i*tmp(2:2:end);
+    y = y(1634000+332:1634000+3314);
+%     plot(real(y));
     %y = y(252800:end);
     %plot(real(y));
-    y = y(252800 + 30 : 252800 + 612);
+%     y = y(252800 + 30 : 252800 + 612);
 %     y = real(y);
 %     for n=1:length(y)
 %         if real(y(n)) > 1.5 * 10^-3

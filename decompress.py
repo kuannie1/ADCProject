@@ -47,10 +47,13 @@ def read_from_file(filename):
 
 if __name__ == '__main__':
 
-	y = read_from_file('transmissiontest.dat')
+	y = read_from_file('rx.dat')
 	y = data_processing.decomplexize_data(y)
-        y = y[252800 + 30-1 : 252800 + 612-1]
+        y = y[1634000+332 - 1:1634000+3314 - 1]
+        #y = y[252800 + 30-1 : 252800 + 612-1]
  	y = data_processing.estimate_transmitted_signal(y)
+ 	plt.plot(y)
+ 	plt.show()
  	y = data_processing.unexpand_and_correct(y)
         np.set_printoptions(threshold='nan')
  	print y
