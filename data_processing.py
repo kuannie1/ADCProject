@@ -60,7 +60,7 @@ def binary_to_dictionary(binary_dict_array):
 		res[key] = int(val,2)
 	return res
 
-def expand(arr, expand_scale = 150):
+def expand(arr, expand_scale = 50):
 	""" Given a binary input array, change 0 values to -1 
 	and expand such that each value in the array is
 	repeated 50 times. """
@@ -80,7 +80,7 @@ def expand(arr, expand_scale = 150):
 	return expanded_array
 
 
-def unexpand_and_correct(arr, expand_scale = 150):
+def unexpand_and_correct(arr, expand_scale = 50):
 	""" Given a received 1-D np array (expanded before transimission), 
 	retrieve original 0s and 1s array from before expansion
 	correcting for errors in process """

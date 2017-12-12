@@ -47,9 +47,10 @@ def read_from_file(filename):
 
 if __name__ == '__main__':
 
-	y = read_from_file('rx.dat')
+	y = read_from_file('superlong50.dat')
 	y = data_processing.decomplexize_data(y)
-        y = y[1634000+332 - 1:1634000+3314 - 1]
+        y = y[1018000+495-1:1044000+1476-1]
+        #y = y[1634000+332 - 1:1634000+3314 - 1]
         #y = y[252800 + 30-1 : 252800 + 612-1]
  	y = data_processing.estimate_transmitted_signal(y)
  	plt.plot(y)
