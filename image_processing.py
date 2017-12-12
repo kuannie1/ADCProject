@@ -142,7 +142,7 @@ class ImageProcessing(object):
 #         return flip_dictionary(temp) # I think this is needed
 
 
-def save_image(img_array, filename):
+def save_image(img_array, filename='images/img.jpg'):
     img = Image.fromarray(img_array)
     img.save(filename)
     img.show()

@@ -5,6 +5,27 @@ import numpy as np
 import cv2
 import huffman	
 import data_processing
+import puffman
+
+def puffman_to_array():
+	p = puffman.puffman(np.array([1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1]), {'010':5, '011': 7, '1':2},)
+	assert p == [2, 5, 7, 5, 2, 2]
+
+	a = puffman.to_array(p, np.array([0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0]))
+	assert np.array_equal(np.array([[2, 5], [7, 5], [2,2]]),a)
+
+def test_data_from_array():
+	h = np.zeros(20)
+	h[9] = 1
+	dim = np.array([0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0])
+	im = np.array([1,1,1,1,1,1,0,0,1,0])
+	dct = np.array([1,0,1,0,1,0,1,0,1,0,1])
+	args = [h, dim, im, h, dct, h, h]
+	data = np.concatenate(args)
+	[dimensions, image, decode_dict] = data_processing.data_from_array(data, h)
+	assert np.array_equal(dim, dimensions)
+	assert np.array_equal(im, image)
+	assert np.array_equal(dct, decode_dict)
 
 def test_complexize_decomplexize():
 	a = np.random.rand(10)
@@ -27,4 +48,6 @@ def test_example_code_from_tree():
 
 if __name__ == '__main__':
 	test_complexize_decomplexize()
-	test_example_code_from_tree
+	test_example_code_from_tree()
+	puffman_to_array()
+	test_data_from_array()
