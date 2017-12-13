@@ -1,6 +1,5 @@
 function  [fdelta, h] = find_fdelta()
     y = read_file();
-    plot(y)
     y_square = y.^2;
 %     for k=1:20000:length(y)
 %         start_index = k
@@ -23,14 +22,18 @@ function  [fdelta, h] = find_fdelta()
             y(n) = y(n) / (h * exp(1i*(fdelta*n + theta)));
         end
     figure
-    plot(y)
+    plot(real(y))
+    
 end
 function y = read_file()
-    f1 = fopen('superlong50.dat', 'r');
+    f1 = fopen('sixtythousandbits.dat', 'r');
     tmp = fread(f1,'float32');
     fclose(f1);
     y = tmp(1:2:end)+1i*tmp(2:2:end);
-    
+    y = y(1076851+3031:4079857);
+    %y = y(1116000+1104:1116000+1077000+1192);
+    %a = length(y)
+    plot(real(y));
 %     real_y = real(y)
 %     start_of_signal = 0
 %     for i=1:length(real_y)
@@ -40,7 +43,7 @@ function y = read_file()
 %     
         
     
-    y =y(1018000+495:1044000+1476);
+    %y =y(1018000+495:1044000+1476); % superlong50.dat
    % plot(real(y));
     %y = y(1005500+78:1005500+3057);
    % figure

@@ -25,7 +25,7 @@ class ImageProcessing(object):
     """
         Compression algorithm
     """
-    def __init__(self, file_path="dog.jpg", tile_size=300):
+    def __init__(self, file_path="images/dog.jpg", tile_size=300):
         """
             file_path = path to image file to be compressed (string)
             tile_size: size of tile (int)
@@ -91,9 +91,10 @@ class ImageProcessing(object):
                     r, g, b = img.getpixel((i, j))
                     rgb_array = np.array([r, g, b])
                     yCbCr = np.matmul(self.rgb2ycbcr_matrix, rgb_array)
-                    tile.y_tile[j][i], tile.cb_tile[j][i], tile.cr_tile[j][i] = center_zero(yCbCr[0]), center_zero(yCbCr[1]), center_zero(yCbCr[2])
+                    tile.y_tile[j][i], tile.cb_tile[j][i], tile.cr_tile[j][i] = self.center_zero(yCbCr[0]), self.center_zero(yCbCr[1]), self.center_zero(yCbCr[2])
             # see the tile
-            # Image.fromarray(tile.y_tile).show()
+            #Image.fromarray(tile.y_tile).show()
+        #Image.fromarray(self.tiles[9].y_tile).show()
 
     def center_zero(self, value):
         return value - 127
@@ -148,7 +149,7 @@ def save_image(img_array, filename='images/img.jpg'):
     img.show()
 
 if __name__ == '__main__':
-    img = cv2.imread('images/dog.jpg')
-    save_image(img, 'images/dog2.jpg')
+    #img = cv2.imread('images/dog.jpg')
+    #save_image(img, 'images/dog2.jpg')
     
-# # ImageProcessing().compress()
+    ImageProcessing().compress()
