@@ -62,7 +62,6 @@ def code_from_tree(huff_tree, code = '', code_dict=dict(), top=True):
 def encode_image(img, code_dict):
 	""" given an image, converts each numerical value in the 
 	image matrix to 0's and 1's using huffman encoding """
-
 	# assume img is a w by h 2D 
 	# h = num rows
 	# w = num cols
@@ -72,14 +71,17 @@ def encode_image(img, code_dict):
 	# and assign encoded value
 	for row_index in range(0, h):
 		for col_index in range(0, w):
-			binary_string = code_dict[img[row_index][col_index]]
+
+			binary_string = code_dict[float(img[row_index][col_index])]
 			binary_list = [int(d) for d in binary_string]
 			res += binary_list
-	
-	h = data_processing.make_binary_list(h)
-	w = data_processing.make_binary_list(w)
-
+	print('h=',h)
+	h = data_processing.make_binary_list(h, eight_bit =False, sixteen_bit=True)
+	w = data_processing.make_binary_list(w, eight_bit =False, sixteen_bit=True)
+	print('h=',h)
+	print('w=', w)
 	dimensions = np.array(h + w)
+	print('dimensions=', dimensions)
 	res = np.array(res)
 	# returns res = np array of numbers and dimesnions = np array of numbers
 	return (res, dimensions)

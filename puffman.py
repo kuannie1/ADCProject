@@ -14,8 +14,10 @@ def puffman(img, decode_dict):
 
 	res = []
 	curr = ''
+	counter = 0
 	for val in img:
-		curr += str(val)
+		
+		curr += str(int(val))
 		if curr in decode_dict:
 			res.append(decode_dict[curr])
 			curr = ''
@@ -24,19 +26,20 @@ def puffman(img, decode_dict):
 def to_array(img, dimensions):
 	""" Converts 1d img array into 2d array according to dimensions """
 
-	if len(dimensions) != 16:
-		print('Error: dimensions should be 16 bits long,', 
-			'containing an 8 bit number for h and an 8 bit number for w')
+	if len(dimensions) != 32:
+		print('Error: dimensions should be 32 bits long,', 
+			'containing a 16 bit number for h and a 16 bit number for w')
 	# Retreive h and w dimensions from bits in array 
 	h = ''
 	w = ''
-	for i in range(8):
-		h += str(dimensions[i])
-		w += str(dimensions[i+8])
+	for i in range(16):
+		h += str(int(dimensions[i]))
+		w += str(int(dimensions[i+16]))
 
 	h = int(h,2)
 	w = int(w,2)
-
+	print('h in puffman to_array=', h)
+	print('w in puffman to_array=', w)
 	res = np.zeros((h,w))
 
 	for row_index in range(0, h):

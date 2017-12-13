@@ -24,21 +24,27 @@ from find_start_end_signal import *
 
 
 
-def main(filename, header, start_index = 0, end_index = None):
+def main(filename, header, start_index = 0, end_index = 0):
     """ Recreates image from transmitted data """
 
-    # Will need to retreive image data (dimensions, encoded img, dictionary) for each tile of each channel of the image
-
     data = read_from_file(filename)
-    if end_index == None: end_index = len(data)
-    data = dataprocessing.decomplexize(data)
-    data = data[start_index:end_index]
+    data = data_processing.decomplexize_data(data)
+    data = np.real(data)
+    if end_index != 0:
+	    data = data[start_index:end_index]
     data = data_processing.unexpand_and_correct(data)
     [dimensions, encoded_img, decode_dict] = data_processing.data_from_array(data, header)
+    np.set_printoptions(threshold='nan')
     decode_dict = data_processing.binary_to_dictionary(decode_dict)
     img_1d = puffman.puffman(encoded_img, decode_dict)
+    print('len_1d_img =', len(img_1d))
+    print('dimensions =', dimensions)
     img = puffman.to_array(img_1d, dimensions)
+
     image_processing.save_image(img)
+
+    print 'done'
+    return [decode_dict, img]
 
 def read_from_file(filename):
     fileobj2 = open(filename, mode='rb')
@@ -46,6 +52,22 @@ def read_from_file(filename):
     fileobj2.close()
     return off
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+def compare_rx_tx(received, original):
+    size = received.size
+    if (received.size != original.size):
+        print "sizes are different"
+        if (received.size>original.size):
+            size = original.size 
+    # use logical xor to compare received & original vectors of length size
+    xor_rx_tx = np.logical_xor(received[0:size], original[0:size])
+    print np.invert( xor_rx_tx )
+
+=======
+=======
+>>>>>>> 32ab80b5a1049519fda7702d891c1785131daf34
 
 def compare_rx_tx(received, original):
     size = received.size
@@ -77,3 +99,7 @@ if __name__ == '__main__':
     # print compare_rx_tx(y, original_signal) # first checking if input & output have same size. Return a np vector with 1 -> same and 0 -> not same
     # print y
 
+if __name__ == '__main__':
+	header = np.zeros(200)
+	header[41] = 1
+	main('notransmission.dat', header)

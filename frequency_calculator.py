@@ -12,6 +12,7 @@ def get_frequencies(img):
     freqs = {}
 
     # assume img is a w by h 2D matrix
+    
     (h, w) = img.shape
     size = float(h*w)
 
