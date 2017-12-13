@@ -1,6 +1,7 @@
 .DS_Store
 *.pyc
 *.m~
+*.dat
 top_block.py
 fileOutput.dat
 n.ps

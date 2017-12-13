@@ -19,7 +19,7 @@ def dictionary_to_binary(input_dict):
 	""" Converts the dictionary to np array of bits
 	where each dictionary entry is represented by 24 bits:
 	8 bits for how many padding zeros in the key
-	8 bits for the key
+	16 bits for the key
 	8 bits for the value
 	Assumes keys are strings and values are integers. """
 
@@ -27,15 +27,16 @@ def dictionary_to_binary(input_dict):
 	for k, v in input_dict.iteritems():	
 		# right pad dictionary keys (huffman encodings) with zeros so they are each 8 bits.
 		# also send how many padding zeros there are, so these can be removed later
-		num_padding_zeros = 8-len(k)
+		num_padding_zeros = 16 - len(k)
+		
 		res += make_binary_list(num_padding_zeros)
 		for d in k:
 			res.append(int(d))
-		for i in range(8-len(k)):
+		for i in range(16-len(k)):
 			res.append(0)
 		res += make_binary_list(v)
 	
-	# len(res) == 24*len(input_dict)
+	# len(res) == 32*len(input_dict)
 	return np.array(res)
 
 def binary_to_dictionary(binary_dict_array):
@@ -46,14 +47,15 @@ def binary_to_dictionary(binary_dict_array):
 	8 bits for the value
 	Returns a dictionary with binary strings as keys and integers as values"""
 	res = {}
-	for i in range(0, len(binary_dict_array), 24):
+	for i in range(0, len(binary_dict_array), 32):
 		num_padding_zeros = ''
 		key = ''
 		val = ''
 		for j in range(8):
-			num_padding_zeros += str(binary_dict_array[i + j])
-			key += str(binary_dict_array[i + j + 8])
-			val += str(binary_dict_array[i + j + 16])
+			num_padding_zeros += str(int(binary_dict_array[i + j]))
+			val += str(int(binary_dict_array[i + j + 24]))
+		for j in range(16):
+			key += str(int(binary_dict_array[i + j + 8]))
 		num_padding_zeros = int(num_padding_zeros, 2)
 		# remove zero padding used to transmit
 		key = key[:len(key)-num_padding_zeros]
@@ -84,16 +86,18 @@ def unexpand_and_correct(arr, expand_scale = 50):
 	""" Given a received 1-D np array (expanded before transimission), 
 	retrieve original 0s and 1s array from before expansion
 	correcting for errors in process """
-
+	
 	res = []
-        
+    
 	# convert to 0s and 1s.
 	for i in range(len(arr)):
 		if arr[i] > 0:
 			arr[i] = 1
 		else:
 			arr[i] = 0
+	print 'to zeros and 1s'
 	res_length = int(math.ceil(len(arr)/float(expand_scale)))
+
 	for i in range(res_length):
 		if (i+1)*expand_scale - (expand_scale / 5.0)  < len(arr):
 			# arr[0: 50], arr[50:100], arr[100: 150]
@@ -104,18 +108,21 @@ def unexpand_and_correct(arr, expand_scale = 50):
 		        indx3 = i*expand_scale + (expand_scale/5.0) 
 			val = stats.mode(arr[int(indx3) :])[0]
 		res.append(val[0])
+
 	return np.array(res)
 
-def make_binary_list(num, eight_bit=True):
+def make_binary_list(num, eight_bit=True, sixteen_bit=False):
 	""" Takes in decimal number, converts to binary and returns list of bits"""
 	if eight_bit:
-		num = format(num,'08b')
+		num = format(int(num),'08b')
+	elif sixteen_bit:
+		num = format(int(num), '016b')
 	else:
-		num = bin(num)[2:]
+		num = bin(int(num))[2:]
 
 	return [int(d) for d in num]
 
-
+print make_binary_list(300, eight_bit = False, sixteen_bit=True)
 
 def complexize_data(nparray_data):
     """ Makes every other index the real and imaginary part of signal """
@@ -229,32 +236,41 @@ def data_from_array(arr, header):
 	""" From 1D transmitted array, given header, returns bit array for 
 	dimensions, image data, and the dictionary. """ 
 	data_set = False
+	dim_start_index = 0
+	img_start_index = 0
+	dict_start_index = 0
+	print('len(arr)=', arr)
 
 	for i in range(len(arr)-len(header)):
 		# if previous len(header) bits are the header
 		if np.array_equal(arr[i:i+len(header)],header):
+			print('found first header at index ', i)
+		
 			# Start header found
 			# set dimensions to first 16 bits after header 
 			# first 8 are height, second 8 are width
 			dim_start_index = i + len(header)
-			dimensions = arr[dim_start_index:dim_start_index+16]
-			img_start_index = dim_start_index+16
+			dimensions = arr[dim_start_index:dim_start_index+32]
+			dimensions = dimensions.astype(int)
+			img_start_index = dim_start_index+32
 			break
-
-	if img_start_index is None:
+	print(dimensions)
+	if img_start_index is 0:
 		print('Error: No start header found. Dimensions array was not created.')
 		return
 
 	img = []
 	for i in range(img_start_index, len(arr)-len(header)): 
 		if np.array_equal(arr[i:i+len(header)], header):
+			print('found middle header at index', i)
 			# Middle header fouond
 			img = np.array(img)
 			dict_start_index = i+len(header)
 			break
 		img.append(arr[i])
 
-	if dict_start_index is None:
+
+	if dict_start_index is 0:
 		print('Error: No middle header found. Image array was not created.')
 		return
 
@@ -265,21 +281,26 @@ def data_from_array(arr, header):
 			# End header found
 			d = np.array(d)
 			data_set = True
+			print '!!!!!!!!!!!!!!!!!!!!!!!!!'
 			break
 		else:
-			d.append(arr[i])
+			d.append(int(arr[i]))
 	
 	if data_set:
 		return[dimensions, img, d]
 	else:
-		print('Error: End header not found. Dictionary array was not created.')
-		return
+		print('Error: End header not found.')
+		print('Dictionary array was set to all bits between middle header')
+		print('and the end of the array minus the length of the header')
+		d = np.array(d)
+		return [dimensions, img, d]
 
 
 
 if __name__ == '__main__':
-    from decompress import read_from_file
-    y = read_from_file('transmissiontest.dat')
-    y = decomplexize_data(y)
-    estimate_transmitted_signal(y)
+    pass
+    # from decompress import read_from_file
+    # y = read_from_file('transmissiontest.dat')
+    # y = decomplexize_data(y)
+    # estimate_transmitted_signal(y)
     #print unexpand_and_correct(np.array([1, -1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, 1, 1, -1]), 5)
