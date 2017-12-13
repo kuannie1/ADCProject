@@ -165,6 +165,42 @@ def remove_channel_effects(y):
         # to worry about that part since the imaginary
         # part is just 0j
         y[n] = y[n] / channel_effects
+
+
+    """
+    y_square = np.square(y)
+    step = 5000
+    for k in range(0, len(y), step):
+        start_index = k
+        if k+step < len(y):
+            end_index = k + step
+        else:
+            end_index = len(y) - 1
+        l
+    fft_y_square = abs(np.fft.fftshift(np.fft.fft(y_square)))
+    xaxis = np.linspace(-np.pi, (len(y_square) - 1.0) / len(y_square) * np.pi, len(y_square))
+    h_square, idx = max(fft_y_square), np.argmax(fft_y_square)
+    theta = np.angle(xaxis[idx]) / 2.0
+    f_delta = xaxis[idx] / 2.0
+    h = np.sqrt(h_square)
+
+    x_estimate = np.zeros(y.shape, dtype=complex)
+    for n in range(0, y.size):
+        channel_effects = (h * np.e**(1.0j*(f_delta*n + theta)))
+
+        # can change this following line to:
+        # y[n] = y[n] / channel_effects
+        # to get rid of the j in the final output
+        # but there is a warning that casting a
+        # complet number to real gets rid of the
+        # imaginary part, but I don't think we need
+        # to worry about that part since the imaginary
+        # part is just 0j
+        y[n] = y[n] / channel_effects
+
+
+
+    """
     return np.real(y)
 
 def remove_noise(y):

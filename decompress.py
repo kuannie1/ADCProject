@@ -20,6 +20,7 @@ from scipy import stats
 import data_processing
 import puffman
 import image_processing
+from find_start_end_signal import *
 
 
 
@@ -45,19 +46,43 @@ def read_from_file(filename):
     fileobj2.close()
     return off
 
-if __name__ == '__main__':
 
-	y = read_from_file('sixtythousandbits.dat')
-	y = data_processing.decomplexize_data(y)
-        y = y[1076851+3031-1:4079857-1]
-        print len(y)
+def compare_rx_tx(received, original):
+    size = received.size
+    if (received.size != original.size):
+        print "sizes are different"
+        if (received.size>original.size):
+            size = original.size 
+    # use logical xor to compare received & original vectors of length size
+    xor_rx_tx = np.logical_xor(received[0:size], original[0:size])
+    print np.invert( xor_rx_tx )
+
+
+if __name__ == '__main__':
+    
+    y = read_from_file('sixtythousandbits.dat')
+    y = data_processing.decomplexize_data(y)
+    y = y[1076851+3031-1:4079857-1]
+    print len(y)
+    #y = y[1634000+332 - 1:1634000+3314 - 1]
+    #y = y[252800 + 30-1 : 252800 + 612-1]
+    y = data_processing.estimate_transmitted_signal(y)
+    plt.plot(y)
+    plt.show()
+    y = data_processing.unexpand_and_correct(y)
+    np.set_printoptions(threshold='nan')
+    print y
+    print len(y)
+    
+    """
+    y = read_from_file('sixtythousandbits.dat')
+    (start_i, end_i) = find_start_end_signal('sixtythousandbits.dat')
+    y = data_processing.decomplexize_data(y)
+    y = y[start_i:end_i]
         #y = y[1634000+332 - 1:1634000+3314 - 1]
         #y = y[252800 + 30-1 : 252800 + 612-1]
- 	y = data_processing.estimate_transmitted_signal(y)
- 	plt.plot(y)
- 	plt.show()
- 	y = data_processing.unexpand_and_correct(y)
-        np.set_printoptions(threshold='nan')
- 	print y
- 	print len(y)
+    y = data_processing.estimate_transmitted_signal(y)
+    plt.plot(y)
+    plt.show()
+    """
 

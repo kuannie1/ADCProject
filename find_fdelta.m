@@ -1,26 +1,27 @@
 function  [fdelta, h] = find_fdelta()
     y = read_file();
     y_square = y.^2;
-%     for k=1:20000:length(y)
-%         start_index = k
-%         if k+20000-1 < length(y)
-%             end_index = k + 20000 - 1;
+%     for k=1:5000:length(y)
+%         start_index = k;
+%         if k+5000-1 < length(y)
+%             end_index = k + 5000 - 1;
 %         else
 %             end_index = length(y);
 %         end
 %         len = end_index - start_index + 1;
         fft_y2 = abs(fftshift(fft(y_square)));
         xaxis = linspace(-pi, (length(y_square) - 1) / length(y_square) * pi, length(y_square));
-        %fft_y2 = abs(fftshift(fft(y_square(start_index:end_index))));
-        %xaxis = linspace(-pi, (len - 1) / len * pi, len);
+%         fft_y2 = abs(fftshift(fft(y_square(start_index:end_index))));
+%         xaxis = linspace(-pi, (len - 1) / len * pi, len);
         [h_sq, idx] = max(fft_y2);
         theta = angle(xaxis(idx)) / 2;
         fdelta = xaxis(idx) / 2;
         h = sqrt(h_sq);
-        %for n=k:end_index
+%         for n=k:end_index
         for n=1:length(y_square)
             y(n) = y(n) / (h * exp(1i*(fdelta*n + theta)));
         end
+%     end
     figure
     plot(real(y))
     
