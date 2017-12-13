@@ -25,11 +25,12 @@ def find_start_end_signal(filename):
     end_of_signal = len(real_y)-1
     for i in list(reversed(range(len(real_y)))):
         if (abs(real_y[i]) > 0.0025):
-            end_of_signal = i+3;
+            end_of_signal = i + 3
             break
 
-    print (start_of_signal, end_of_signal)
-    plt.plot(real_y[start_of_signal:end_of_signal])
-    plt.show()
+    print "start & end of signal: ", (start_of_signal, end_of_signal)
+    # plt.plot(real_y[start_of_signal:end_of_signal])
+    # plt.show()
+    return (start_of_signal, end_of_signal)
 
-find_start_end_signal()
+# find_start_end_signal()
