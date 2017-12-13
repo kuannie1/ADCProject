@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
 from decompress import *
-import data_processing
+from data_processing import *
 
 
 def find_start_end_signal(filename):
@@ -16,7 +16,7 @@ def find_start_end_signal(filename):
 
     # get start & end of signal
     start_of_signal = 0 # going to be first index at first (update with later one if I have time)
-    for i in range(len(real_y)):
+    for i in range(2000, len(real_y), 1):
         if (abs(real_y[i]) > 0.0025):
             start_of_signal = i - 3
             break
@@ -33,4 +33,4 @@ def find_start_end_signal(filename):
     # plt.show()
     return (start_of_signal, end_of_signal)
 
-# find_start_end_signal()
+find_start_end_signal("sixtythousandbits.dat")
