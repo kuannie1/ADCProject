@@ -152,7 +152,9 @@ def remove_channel_effects(y):
         returns: x_estimate
     """
     y_square = np.square(y)
+    print "y is squared"
     fft_y_square = abs(np.fft.fftshift(np.fft.fft(y_square)))
+    print "fft is taken"
     xaxis = np.linspace(-np.pi, (len(y_square) - 1.0) / len(y_square) * np.pi, len(y_square))
     h_square, idx = max(fft_y_square), np.argmax(fft_y_square)
     theta = np.angle(xaxis[idx]) / 2.0
@@ -161,6 +163,9 @@ def remove_channel_effects(y):
 
     x_estimate = np.zeros(y.shape, dtype=complex)
     for n in range(0, y.size):
+        if n % 100000 == 0:
+            print "n", n
+            print "y.size", y.size
         channel_effects = (h * np.e**(1.0j*(f_delta*n + theta)))
 
         # can change this following line to:
@@ -254,7 +259,6 @@ def data_from_array(arr, header):
 			dimensions = dimensions.astype(int)
 			img_start_index = dim_start_index+32
 			break
-	print(dimensions)
 	if img_start_index is 0:
 		print('Error: No start header found. Dimensions array was not created.')
 		return

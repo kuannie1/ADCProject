@@ -18,23 +18,33 @@ function  [fdelta, h] = find_fdelta()
         fdelta = xaxis(idx) / 2;
         h = sqrt(h_sq);
 %         for n=k:end_index
-        for n=1:length(y_square)
+         for n=1:length(y_square)
             y(n) = y(n) / (h * exp(1i*(fdelta*n + theta)));
         end
 %     end
     figure
     plot(real(y))
-    
+    title('Received Signal', 'FontSize', 14)
+    xlabel('Time', 'FontSize', 12)
+    ylabel('Amplitude', 'FontSize', 12)
+%     
 end
 function y = read_file()
-    f1 = fopen('sixtythousandbits.dat', 'r');
+    f1 = fopen('superlong50.dat', 'r');
     tmp = fread(f1,'float32');
     fclose(f1);
     y = tmp(1:2:end)+1i*tmp(2:2:end);
-    y = y(1076851+3031:4079857);
+    y =y(1018000+495:1044000+1476); % superlong50.dat
+%     y = y(1116000+1104:1116000+1077000+1192); % sixty thoughsand bits
+%     y = y(1061000+9947:3674616+3807); doge
+    plot(y);
+    %y = y(1108386:23555736);
+    %y = y(824600:end);
+    %y = y(1156245+4:6949292);
+    %y = y(1076851+3031:4079857);
     %y = y(1116000+1104:1116000+1077000+1192);
     %a = length(y)
-    plot(real(y));
+%     plot(real(y));
 %     real_y = real(y)
 %     start_of_signal = 0
 %     for i=1:length(real_y)
