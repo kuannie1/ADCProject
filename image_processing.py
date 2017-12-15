@@ -4,6 +4,7 @@ Script to separate an image into tiles and color channels before compressing.
 import cv2, math
 import numpy as np
 from PIL import Image
+from PIL import ImageFile
 from frequency_calculator import get_frequencies
 from data_processing import *
 from puffman import *
@@ -96,7 +97,7 @@ class ImageProcessing(object):
                     # see the tile
                     #Image.fromarray(tile.y_tile).show()
                     #Image.fromarray(self.tiles[9].y_tile).show()
-                    tile.y_tile[j][i], tile.cb_tile[j][i], tile.cr_tile[j][i] = self.center_zero(yCbCr[0]), self.center_zero(yCbCr[1]), self.center_zero(yCbCr[2])
+                    tile.y_tile[j][i], tile.cb_tile[j][i], tile.cr_tile[j][i] = int(self.center_zero(yCbCr[0])), int(self.center_zero(yCbCr[1])), int(self.center_zero(yCbCr[2]))
 
     def center_zero(self, value):
         return value #- 127
@@ -107,53 +108,17 @@ class ImageProcessing(object):
         self.color_transform()
 
 
-# class ConstructImage(object):
-#     """
-#         Parse numpy array to get the decoding dictionary and image tiles
-#     """
-#     def __init__(self, complete_vector, tile_size=300):
-#         """
-#             image_vector = deconstructed 1D numpy array with headers, 
-#             tile_size = size of tile (int)
-#         """
-#         self.tile_size = tile_size
-#         self.complete_vector = complete_vector
-#         self.dict = self.get_dictionary()
-#         self.img_matrix = None
-#     def get_dimensions(self):
-#         height = self.complete_vector[200:208]
-#         width = self.complete_vector[208:216]
-#         return self.complete_vector[200:216]
-#     def get_dict(self):
-#         decode_dict = self.complete_vector[216+34+200:216+34+200+80] # 200 -> header, 16 -> h & w dimensions, 34 -> image len, 80 -> dictionary length
-#         return decode_dict
-#     def get_encoded_img(self):
-#         encoded_img = self.complete_vector[216:216+34] # 200 -> header, 16 -> h & w dimensions, 34 -> image len
-#         return encoded_img
-#     def get_dictionary(self):
-#         """
-#             Take in binary dictionary and convert it to an actual dictionary
-#         """
-#         binary_float_vector = list(self.complete_vector[216+34+200:216+34+200+120]) # 120 -> encoded_dict len
-#         binary_int_vector = []
-#         for i in range(len(binary_float_vector)):
-#             try:
-#                 binary_int_vector.append(int(binary_float_vector[i]))
-#             except IndexError as e:
-#                 print e, i
-#         temp = binary_to_dictionary(binary_int_vector)
-#         return flip_dictionary(temp) # I think this is needed
-
-
 def save_image(img_array, filename='images/img.jpg'):
     print('SAVING IMG')
+    print('img array type: ', type(img_array))
+    print('img array shape: ', img_array.shape)
     img = Image.fromarray(img_array)
+    
     img.format = 'JPG'
     img.show()
     if img.mode != 'RGB':
         img = img.convert('RGB')
     img.save(filename)
-    #img.show()
 
 if __name__ == '__main__':
     img = cv2.imread('images/dog.jpg')
