@@ -57,9 +57,11 @@ class ImageProcessing(object):
         # add to w and h so right and bottom edges have full tiles
         # in case w and h are not originally divisible by self.tile_size
         extra = w % self.tile_size
-        w += (self.tile_size - extra)
+        if extra > 0:
+            w += (self.tile_size - extra)
         extra = h % self.tile_size
-        h += (self.tile_size - extra)
+        if extra > 0:
+            h += (self.tile_size - extra)
 
 
         # loop through w and h with tile_size steps
@@ -75,10 +77,10 @@ class ImageProcessing(object):
         """
         for tile in self.tiles:
             (h, w, _) = tile.tile_image.shape
-
             # cv2 uses BGR to open images
             rgb_tile = cv2.cvtColor(tile.tile_image, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(rgb_tile, 'RGB')
+
 
             # placeholder matricies for the 3 color spaces
             # size of each matrix is size of original tile
@@ -91,12 +93,10 @@ class ImageProcessing(object):
                     r, g, b = img.getpixel((i, j))
                     rgb_array = np.array([r, g, b])
                     yCbCr = np.matmul(self.rgb2ycbcr_matrix, rgb_array)
-            # see the tile
-            #Image.fromarray(tile.y_tile).show()
-        #Image.fromarray(self.tiles[9].y_tile).show()
-                    tile.y_tile[j][i], tile.cb_tile[j][i], tile.cr_tile[j][i] = int(self.center_zero(yCbCr[0])), int(self.center_zero(yCbCr[1])), int(self.center_zero(yCbCr[2]))
-            # see the tile
-            #Image.fromarray(tile.y_tile).show()
+                    # see the tile
+                    #Image.fromarray(tile.y_tile).show()
+                    #Image.fromarray(self.tiles[9].y_tile).show()
+                    tile.y_tile[j][i], tile.cb_tile[j][i], tile.cr_tile[j][i] = self.center_zero(yCbCr[0]), self.center_zero(yCbCr[1]), self.center_zero(yCbCr[2])
 
     def center_zero(self, value):
         return value #- 127
@@ -156,8 +156,7 @@ def save_image(img_array, filename='images/img.jpg'):
     #img.show()
 
 if __name__ == '__main__':
-    pass
-    # img = cv2.imread('images/dog.jpg')
+    img = cv2.imread('images/dog.jpg')
     # save_image(img, 'images/dog2.jpg')
     
-    #ImageProcessing().compress()
+    ImageProcessing().compress()

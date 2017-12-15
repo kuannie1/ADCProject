@@ -62,13 +62,28 @@ def compare_rx_tx(received, original):
     size = received.size
     if (received.size != original.size):
         print "sizes are different"
+        print "sizex ", len(original)
+        print "sizey ", len(received)
         if (received.size>original.size):
             size = original.size 
     # use logical xor to compare received & original vectors of length size
+    np.set_printoptions(threshold='nan')
     xor_rx_tx = np.logical_xor(received[0:size], original[0:size])
     print np.invert( xor_rx_tx )
 
 if __name__ == '__main__':
-	header = np.zeros(200)
-	header[41] = 1
-	main('receivedDoge.dat', header, start_index=1156245-1, end_index=6949292-1)
+        y = read_from_file('output.dat')
+        y = data_processing.decomplexize_data(y)
+        y = y[1570000+640 -1:4568000+2612 - 1]
+        y = data_processing.estimate_transmitted_signal(y)
+        y = data_processing.unexpand_and_correct(y)
+
+        x= read_from_file('compressed.dat')
+        x= data_processing.decomplexize_data(x)
+        x = data_processing.estimate_transmitted_signal(x)
+        x = data_processing.unexpand_and_correct(x)
+        compare_rx_tx(y, x)
+
+	#header = np.zeros(200)
+	#header[41] = 1
+	#main('receivedDoge.dat', header, start_index=1156245-1, end_index=6949292-1)
