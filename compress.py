@@ -30,19 +30,25 @@ def main(img, header, fn='fileOutput.dat'):
     huff_tree = huffman.make_huffman_tree(freqs)  
     code_dict = huffman.code_from_tree(huff_tree) # dictionary {number: number}
     encoded_img, dimensions = huffman.encode_image(img, code_dict) 
-    print('len_encoded_img=', len(encoded_img))
-    decode_dict = data_processing.flip_dictionary(code_dict)  
+    decode_dict = data_processing.flip_dictionary(code_dict) 
+    print('DECODE DICT = ', decode_dict) 
     decode_dict = data_processing.dictionary_to_binary(decode_dict) 
     np.set_printoptions(threshold='nan')
-    args = [header, dimensions, encoded_img, header, decode_dict, header]
+    args = [header, dimensions, encoded_img, header, decode_dict, header]  
+    # print('================')
+    # print('ENCODED IMG DATA BITS')
+    # print(encoded_img)
+    print('================')
     print('dimensions=', dimensions)
-    data= np.concatenate(args)
+    data = np.concatenate(args)
+    print('================')
+    print('TOTAL DATA LENGTH = ', len(data), ' BITS')
+    print('================')
     data = data_processing.expand(data)
     data = data_processing.complexize_data(data)
     write_to_file(data, fn)
 
-    return [decode_dict, encoded_img]
-
+    return 
 def write_to_file(complex_array, fn):
     """ Takes in np array with complex values & writes them to file """
     #source; https://stackoverflow.com/questions/29809988/numpy-array-tofile-binary-file-looks-strange-in-notepad
@@ -59,21 +65,7 @@ if __name__ == '__main__':
     ImageProcessing = image_processing.ImageProcessing()
     ImageProcessing.compress()
     img = ImageProcessing.tiles[9].y_tile
-    header = np.zeros(200)
+    header = np.zeros(1000)
     header[41] = 1
-    main(img, header, 'notransmission.dat')
-
-    # EXAMPLE TEST OF USE
-    #test_img = np.array([[1, 2, 5, 6, 2], [2, 5, 3, 5, 1], [3, 6, 1, 5, 1]])
-    #main(test_img)
-
-    # send random 60,000 bits
-    #a = np.ones(60000)
-    #a[:35000] = 0
-    #np.random.shuffle(a)
-    #print a
-    #a = np.array([0, 0, 0, 1, 1, 0] * 10000)
-    #print len(a)
-    #a = data_processing.expand(a)
-    #a = data_processing.complexize_data(a)
-    #write_to_file(a, "compressed.dat")
+    main(img, header, 'no_transmission.dat')
+    

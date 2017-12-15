@@ -151,51 +151,16 @@ def remove_channel_effects(y):
         y: received signal
         returns: x_estimate
     """
+
+
     y_square = np.square(y)
-    print "y is squared"
-    fft_y_square = abs(np.fft.fftshift(np.fft.fft(y_square)))
-    print "fft is taken"
-    xaxis = np.linspace(-np.pi, (len(y_square) - 1.0) / len(y_square) * np.pi, len(y_square))
-    h_square, idx = max(fft_y_square), np.argmax(fft_y_square)
-    theta = np.angle(xaxis[idx]) / 2.0
-    f_delta = xaxis[idx] / 2.0
-    h = np.sqrt(h_square)
-
-    x_estimate = np.zeros(y.shape, dtype=complex)
-    for n in range(0, y.size):
-        if n % 100000 == 0:
-            print "n", n
-            print "y.size", y.size
-        channel_effects = (h * np.e**(1.0j*(f_delta*n + theta)))
-
-        # can change this following line to:
-        # y[n] = y[n] / channel_effects
-        # to get rid of the j in the final output
-        # but there is a warning that casting a
-        # complet number to real gets rid of the
-        # imaginary part, but I don't think we need
-        # to worry about that part since the imaginary
-        # part is just 0j
-        y[n] = y[n] / channel_effects
-
-
-    """
-    y_square = np.square(y)
-    step = 5000
-    for k in range(0, len(y), step):
-        start_index = k
-        if k+step < len(y):
-            end_index = k + step
-        else:
-            end_index = len(y) - 1
-        l
     fft_y_square = abs(np.fft.fftshift(np.fft.fft(y_square)))
     xaxis = np.linspace(-np.pi, (len(y_square) - 1.0) / len(y_square) * np.pi, len(y_square))
     h_square, idx = max(fft_y_square), np.argmax(fft_y_square)
     theta = np.angle(xaxis[idx]) / 2.0
     f_delta = xaxis[idx] / 2.0
     h = np.sqrt(h_square)
-
+    print('h generated')
     x_estimate = np.zeros(y.shape, dtype=complex)
     for n in range(0, y.size):
         channel_effects = (h * np.e**(1.0j*(f_delta*n + theta)))
@@ -209,10 +174,6 @@ def remove_channel_effects(y):
         # to worry about that part since the imaginary
         # part is just 0j
         y[n] = y[n] / channel_effects
-
-
-
-    """
     return np.real(y)
 
 def remove_noise(y):
@@ -244,21 +205,22 @@ def data_from_array(arr, header):
 	dim_start_index = 0
 	img_start_index = 0
 	dict_start_index = 0
-	print('len(arr)=', arr)
 
 	for i in range(len(arr)-len(header)):
-		# if previous len(header) bits are the header
+		
+		# if next len(header) bits are the header
 		if np.array_equal(arr[i:i+len(header)],header):
 			print('found first header at index ', i)
-		
 			# Start header found
 			# set dimensions to first 16 bits after header 
 			# first 8 are height, second 8 are width
 			dim_start_index = i + len(header)
 			dimensions = arr[dim_start_index:dim_start_index+32]
 			dimensions = dimensions.astype(int)
+			print('dimensions', dimensions)
 			img_start_index = dim_start_index+32
 			break
+	print('dimensions', dimensions)
 	if img_start_index is 0:
 		print('Error: No start header found. Dimensions array was not created.')
 		return
@@ -285,7 +247,6 @@ def data_from_array(arr, header):
 			# End header found
 			d = np.array(d)
 			data_set = True
-			print '!!!!!!!!!!!!!!!!!!!!!!!!!'
 			break
 		else:
 			d.append(int(arr[i]))
@@ -303,8 +264,3 @@ def data_from_array(arr, header):
 
 if __name__ == '__main__':
     pass
-    # from decompress import read_from_file
-    # y = read_from_file('transmissiontest.dat')
-    # y = decomplexize_data(y)
-    # estimate_transmitted_signal(y)
-    #print unexpand_and_correct(np.array([1, -1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, 1, 1, -1]), 5)
